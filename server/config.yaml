@@ -1,0 +1,3 @@
+system:
+  apiurl: "http://localhost:9090/api.php"
+  addr: 8080

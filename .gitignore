@@ -1,0 +1,40 @@
+# 二进制文件
+*.exe
+*.exe~
+
+# 临时文件
+*.tmp
+
+# 测试数据
+testdata/
+
+# 编译产物
+bin/
+vendor/
+
+# 日志文件
+*.log
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# 编辑器配置文件
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 证书和密钥文件
+*.pem
+*.key
+*.crt
+
+# 环境变量文件
+.env
+
+# 缓存文件
+__debug_bin
