@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"wiki-user/server/global"
 	"wiki-user/server/model"
+	utils "wiki-user/server/util"
 )
 
 type AccountApi struct{}
@@ -20,11 +21,12 @@ func (s *AccountApi) Login(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := getToken(global.CONFIG.System.ApiUrl, "login")
+	token, err := getToken(c, global.CONFIG.System.ApiUrl, "login")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "get login token failed"})
+		return
 	}
-	resp, err := accountService.LoginUser(&loginInfo, global.CONFIG.System.ApiUrl, token)
+	resp, err := accountService.LoginUser(c, &loginInfo, global.CONFIG.System.ApiUrl, token)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Login failed"})
 		return
@@ -38,11 +40,12 @@ func (s *AccountApi) Register(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := getToken(global.CONFIG.System.ApiUrl, "createaccount")
+	token, err := getToken(c, global.CONFIG.System.ApiUrl, "createaccount")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "get tken failed"})
+		return
 	}
-	resp, err := accountService.RegisterUser(&registerInfo, global.CONFIG.System.ApiUrl, token)
+	resp, err := accountService.RegisterUser(c, &registerInfo, global.CONFIG.System.ApiUrl, token)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Registration failed"})
 		return
@@ -51,8 +54,10 @@ func (s *AccountApi) Register(c *gin.Context) {
 }
 
 // 改进的getToken函数，加入了错误处理和明确的日志记录
-func getToken(apiUrl string, tokenType string) (string, error) {
-	client := &http.Client{}
+func getToken(c *gin.Context, apiUrl string, tokenType string) (string, error) {
+
+	client := utils.GetSession(c).Client
+
 	data := url.Values{}
 	data.Set("action", "query")
 	data.Set("meta", "tokens")
@@ -65,6 +70,7 @@ func getToken(apiUrl string, tokenType string) (string, error) {
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("performing token request failed: %v", err)

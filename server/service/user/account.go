@@ -1,16 +1,21 @@
 package user
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
-	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"wiki-user/server/model"
+	utils "wiki-user/server/util"
 )
 
 type AccountService struct{}
 
 // LoginUser logs in a user with the given login information
-func (accountService *AccountService) LoginUser(loginInfo *model.LoginInfo, apiURL string, token string) (string, error) {
+func (accountService *AccountService) LoginUser(c *gin.Context, loginInfo *model.LoginInfo, apiURL string, token string) (string, error) {
+	client := utils.GetSession(c).Client
+
 	data := url.Values{}
 	data.Set("action", "login")
 	data.Set("lgname", loginInfo.Username)
@@ -18,7 +23,7 @@ func (accountService *AccountService) LoginUser(loginInfo *model.LoginInfo, apiU
 	data.Set("format", "json")
 	data.Set("lgtoken", token)
 
-	resp, err := http.PostForm(apiURL, data)
+	resp, err := client.PostForm(apiURL, data)
 	if err != nil {
 		return "", err
 	}
@@ -34,16 +39,21 @@ func (accountService *AccountService) LoginUser(loginInfo *model.LoginInfo, apiU
 }
 
 // RegisterUser registers a user with the given registration information
-func (accountService *AccountService) RegisterUser(registerInfo *model.RegisterInfo, apiURL string, token string) (string, error) {
+func (accountService *AccountService) RegisterUser(c *gin.Context, registerInfo *model.RegisterInfo, apiURL string, token string) (string, error) {
+
+	client := utils.GetSession(c).Client
 
 	data := url.Values{}
 	data.Set("action", "createaccount")
 	data.Set("username", registerInfo.Username)
 	data.Set("password", registerInfo.Password)
+	data.Set("retype", registerInfo.Password)
 	data.Set("email", registerInfo.Email)
 	data.Set("format", "json")
 	data.Set("createtoken", token)
-	resp, err := http.PostForm(apiURL, data)
+	data.Set("createreturnurl", "http://localhost:9090/index.php")
+
+	resp, err := client.PostForm(apiURL, data)
 	if err != nil {
 		return "", err
 	}
@@ -53,7 +63,18 @@ func (accountService *AccountService) RegisterUser(registerInfo *model.RegisterI
 	if err != nil {
 		return "", err
 	}
+	// 构建请求 URL
+	loginURL, _ := url.Parse("http://localhost:9090/api.php")
 
+	// 日志记录 cookies
+	logCookies(loginURL, client.Jar.(*cookiejar.Jar))
 	// Handle API response to determine if registration was successful
 	return string(body), nil // Placeholder for error handling based on API response
+}
+
+func logCookies(u *url.URL, jar *cookiejar.Jar) {
+	cookies := jar.Cookies(u)
+	for _, cookie := range cookies {
+		fmt.Println("Cookie: ", cookie.Name, cookie.Value)
+	}
 }
