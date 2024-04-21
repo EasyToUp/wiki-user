@@ -1,3 +1,81 @@
 system:
   apiurl: "http://localhost:9090/api.php"
   addr: 8080
+  env: public
+  db-type: mysql
+  oss-type: aws-s3
+  use-multipoint: false
+  use-redis: false
+  iplimit-count: 15000
+  iplimit-time: 3600
+  router-prefix: ""
+
+captcha:
+  key-long: 6
+  img-width: 240
+  img-height: 80
+  open-captcha: 0
+  open-captcha-timeout: 3600
+
+jwt:
+  signing-key: 05fa1605-fa9d-41fb-ad56-7af9a656214a
+  expires-time: 7d
+  buffer-time: 1d
+  issuer: qmPlus
+
+db-list:
+  - disable: true
+    type: ""
+    alias-name: ""
+    path: ""
+    port: ""
+    config: ""
+    db-name: ""
+    username: ""
+    password: ""
+    prefix: ""
+    singular: false
+    engine: ""
+    max-idle-conns: 10
+    max-open-conns: 100
+    log-mode: ""
+    log-zap: false
+
+email:
+  to: xxx@qq.com
+  port: 465
+  from: xxx@163.com
+  host: smtp.163.com
+  is-ssl: true
+  secret: xxx
+  nickname: test
+
+mysql:
+  path: 124.221.47.28
+  port: "3269"
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db-name: zelu
+  username: zelusec
+  password: hr8IHbyoKmW6avVK
+  prefix: ""
+  singular: false
+  engine: ""
+  max-idle-conns: 10
+  max-open-conns: 100
+  log-mode: error
+  log-zap: false
+redis:
+  db: 0
+  addr: 127.0.0.1:6379
+  password: ""
+
+zap:
+  level: debug
+  prefix: 'wiki-game'
+  format: json
+  director: log
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  max-age: 0
+  show-line: true
+  log-in-console: true

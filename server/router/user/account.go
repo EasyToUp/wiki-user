@@ -14,8 +14,7 @@ func (s *AccountRouter) InitAccountRouter(Router *gin.RouterGroup) {
 	apiRouter.Use(middleware.SessionManager())
 	accountApi := api.ApiGroupApp.AccountApiGroup.AccountApi
 	{
-		apiRouter.POST("login", accountApi.Login)       // 创建Api
-		apiRouter.POST("register", accountApi.Register) // 删除Api
-
+		apiRouter.POST("login", accountApi.Login)       // login
+		apiRouter.POST("register", accountApi.Register) // register
 	}
 }
