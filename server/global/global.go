@@ -9,33 +9,34 @@ import (
 	"gorm.io/gorm"
 	"sync"
 	"wiki-user/server/config"
+	"wiki-user/server/util/timer"
 )
 
 var (
-	CONFIG                  config.Server
-	VIPER                   *viper.Viper
-	GVA_LOG                 *zap.Logger
-	GVA_DBList              map[string]*gorm.DB
-	GVA_DB                  *gorm.DB
-	lock                    sync.RWMutex
-	GVA_CONFIG              config.Server
-	GVA_Concurrency_Control = &singleflight.Group{}
-	BlackCache              local_cache.Cache
-	GVA_REDIS               *redis.Client
+	WK_VIPER               *viper.Viper
+	WK_LOG                 *zap.Logger
+	WK_DBList              map[string]*gorm.DB
+	WK_DB                  *gorm.DB
+	lock                   sync.RWMutex
+	WK_CONFIG              config.Server
+	WK_Concurrency_Control = &singleflight.Group{}
+	BlackCache             local_cache.Cache
+	WK_REDIS               *redis.Client
+	WK_Timer               timer.Timer = timer.NewTimerTask()
 )
 
 // GetGlobalDBByDBName 通过名称获取db list中的db
 func GetGlobalDBByDBName(dbname string) *gorm.DB {
 	lock.RLock()
 	defer lock.RUnlock()
-	return GVA_DBList[dbname]
+	return WK_DBList[dbname]
 }
 
 // MustGetGlobalDBByDBName 通过名称获取db 如果不存在则panic
 func MustGetGlobalDBByDBName(dbname string) *gorm.DB {
 	lock.RLock()
 	defer lock.RUnlock()
-	db, ok := GVA_DBList[dbname]
+	db, ok := WK_DBList[dbname]
 	if !ok || db == nil {
 		panic("db no init")
 	}

@@ -21,12 +21,12 @@ func (s *AccountApi) Login(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := getToken(c, global.CONFIG.System.ApiUrl, "login")
+	token, err := getToken(c, global.WK_CONFIG.System.ApiUrl, "login")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "get login token failed"})
 		return
 	}
-	resp, err := accountService.LoginUser(c, &loginInfo, global.CONFIG.System.ApiUrl, token)
+	resp, err := accountService.LoginUser(c, &loginInfo, global.WK_CONFIG.System.ApiUrl, token)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Login failed"})
 		return
@@ -40,12 +40,12 @@ func (s *AccountApi) Register(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	token, err := getToken(c, global.CONFIG.System.ApiUrl, "createaccount")
+	token, err := getToken(c, global.WK_CONFIG.System.ApiUrl, "createaccount")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "get tken failed"})
 		return
 	}
-	resp, err := accountService.RegisterUser(c, &registerInfo, global.CONFIG.System.ApiUrl, token)
+	resp, err := accountService.RegisterUser(c, &registerInfo, global.WK_CONFIG.System.ApiUrl, token)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Registration failed"})
 		return

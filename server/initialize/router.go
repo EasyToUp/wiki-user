@@ -10,7 +10,7 @@ import (
 func Routers() *gin.Engine {
 	Router := gin.New()
 	Router.Use(middleware.DefaultLogger())
-	baseGroup := Router.Group(global.CONFIG.System.RouterPrefix)
+	baseGroup := Router.Group(global.WK_CONFIG.System.RouterPrefix)
 	accountRouter := router.RouterGroupApp.User
 	accountRouter.InitAccountRouter(baseGroup)
 	return Router

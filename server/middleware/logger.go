@@ -7,6 +7,7 @@ import (
 	"io"
 	"strings"
 	"time"
+	"wiki-user/server/global"
 
 	"github.com/gin-gonic/gin"
 )
@@ -73,8 +74,11 @@ func (l Logger) SetLoggerMiddleware() gin.HandlerFunc {
 			// 自行判断key/value 脱敏等
 			l.FilterKeyword(&layout)
 		}
-		// 自行处理日志
-		l.Print(layout)
+		// 自行处理日志 todo: 可以优化增加策略
+		//l.Print(layout)
+		v, _ := json.Marshal(layout)
+		global.WK_LOG.Info(string(v))
+
 	}
 }
 

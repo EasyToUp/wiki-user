@@ -17,7 +17,7 @@ type JwtService struct{}
 // @param: jwtList model.JwtBlacklist
 // @return: err error
 func (jwtService *JwtService) JsonInBlacklist(jwtList model.JwtBlacklist) (err error) {
-	err = global.GVA_DB.Create(&jwtList).Error
+	err = global.WK_DB.Create(&jwtList).Error
 	if err != nil {
 		return
 	}
@@ -34,7 +34,7 @@ func (jwtService *JwtService) JsonInBlacklist(jwtList model.JwtBlacklist) (err e
 func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 	_, ok := global.BlackCache.Get(jwt)
 	return ok
-	// err := global.GVA_DB.Where("jwt = ?", jwt).First(&system.JwtBlacklist{}).Error
+	// err := global.WK_DB.Where("jwt = ?", jwt).First(&system.JwtBlacklist{}).Error
 	// isNotFound := errors.Is(err, gorm.ErrRecordNotFound)
 	// return !isNotFound
 }
@@ -46,7 +46,7 @@ func (jwtService *JwtService) IsBlacklist(jwt string) bool {
 //@return: redisJWT string, err error
 
 func (jwtService *JwtService) GetRedisJWT(userName string) (redisJWT string, err error) {
-	redisJWT, err = global.GVA_REDIS.Get(context.Background(), userName).Result()
+	redisJWT, err = global.WK_REDIS.Get(context.Background(), userName).Result()
 	return redisJWT, err
 }
 
@@ -58,20 +58,20 @@ func (jwtService *JwtService) GetRedisJWT(userName string) (redisJWT string, err
 
 func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
-	dr, err := utils.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
+	dr, err := utils.ParseDuration(global.WK_CONFIG.JWT.ExpiresTime)
 	if err != nil {
 		return err
 	}
 	timer := dr
-	err = global.GVA_REDIS.Set(context.Background(), userName, jwt, timer).Err()
+	err = global.WK_REDIS.Set(context.Background(), userName, jwt, timer).Err()
 	return err
 }
 
 func LoadAll() {
 	var data []string
-	err := global.GVA_DB.Model(&model.JwtBlacklist{}).Select("jwt").Find(&data).Error
+	err := global.WK_DB.Model(&model.JwtBlacklist{}).Select("jwt").Find(&data).Error
 	if err != nil {
-		global.GVA_LOG.Error("加载数据库jwt黑名单失败!", zap.Error(err))
+		global.WK_LOG.Error("加载数据库jwt黑名单失败!", zap.Error(err))
 		return
 	}
 	for i := 0; i < len(data); i++ {

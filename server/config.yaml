@@ -51,28 +51,28 @@ email:
   nickname: test
 
 mysql:
-  path: 124.221.47.28
-  port: "3269"
+  path: 127.0.0.1
+  port: "3309"
   config: charset=utf8mb4&parseTime=True&loc=Local
-  db-name: zelu
-  username: zelusec
-  password: hr8IHbyoKmW6avVK
+  db-name: wikidb
+  username: wikiuser
+  password: 12345678
   prefix: ""
   singular: false
   engine: ""
   max-idle-conns: 10
   max-open-conns: 100
-  log-mode: error
-  log-zap: false
+  log-mode: Info
+  log-zap: true
 redis:
   db: 0
   addr: 127.0.0.1:6379
   password: ""
 
 zap:
-  level: debug
+  level: info
   prefix: 'wiki-game'
-  format: json
+  format: Console
   director: log
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace

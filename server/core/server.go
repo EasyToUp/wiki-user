@@ -9,7 +9,7 @@ import (
 func RunServer() {
 
 	Router := initialize.Routers()
-	address := fmt.Sprintf(":%d", global.CONFIG.System.Addr)
+	address := fmt.Sprintf(":%d", global.WK_CONFIG.System.Addr)
 	Router.Run(address)
 	fmt.Println("server run success on ", address)
 
