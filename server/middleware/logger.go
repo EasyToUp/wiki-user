@@ -24,6 +24,7 @@ type LogLayout struct {
 	Error     string                 // 错误
 	Cost      time.Duration          // 花费时间
 	Source    string                 // 来源
+	Response  string                 // 响应结果
 }
 
 type Logger struct {
@@ -39,6 +40,31 @@ type Logger struct {
 	Source string
 }
 
+// bodyLogWriter 自定义ResponseWriter，用于捕获响应体
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer // 缓冲区，用来临时存储响应体
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
+}
+
+func DefaultLogger() gin.HandlerFunc {
+	return Logger{
+		Filter: func(c *gin.Context) bool {
+			return false
+		},
+		Print: func(layout LogLayout) {
+			// 标准输出,k8s做收集
+			v, _ := json.Marshal(layout)
+			fmt.Println(string(v))
+		},
+		Source: "WIKI",
+	}.SetLoggerMiddleware()
+}
+
 func (l Logger) SetLoggerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
@@ -51,6 +77,11 @@ func (l Logger) SetLoggerMiddleware() gin.HandlerFunc {
 			// 将原body塞回去
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
 		}
+		bodyLWriter := &bodyLogWriter{
+			body:           bytes.NewBufferString(""),
+			ResponseWriter: c.Writer,
+		}
+		c.Writer = bodyLWriter
 		c.Next()
 		cost := time.Since(start)
 		layout := LogLayout{
@@ -74,24 +105,12 @@ func (l Logger) SetLoggerMiddleware() gin.HandlerFunc {
 			// 自行判断key/value 脱敏等
 			l.FilterKeyword(&layout)
 		}
-		// 自行处理日志 todo: 可以优化增加策略
+
+		layout.Response = string(bodyLWriter.body.Bytes())
+		// 自行处理日志 todo: 可以增加策略
 		//l.Print(layout)
 		v, _ := json.Marshal(layout)
 		global.WK_LOG.Info(string(v))
 
 	}
-}
-
-func DefaultLogger() gin.HandlerFunc {
-	return Logger{
-		Filter: func(c *gin.Context) bool {
-			return false
-		},
-		Print: func(layout LogLayout) {
-			// 标准输出,k8s做收集
-			v, _ := json.Marshal(layout)
-			fmt.Println(string(v))
-		},
-		Source: "GVA",
-	}.SetLoggerMiddleware()
 }

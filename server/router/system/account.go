@@ -1,4 +1,4 @@
-package user
+package system
 
 import (
 	"github.com/gin-gonic/gin"
@@ -10,9 +10,8 @@ type AccountRouter struct{}
 
 func (s *AccountRouter) InitAccountRouter(Router *gin.RouterGroup) {
 	apiRouter := Router.Group("account")
-	apiRouter.Use(middleware.CORSMiddleware())
-	apiRouter.Use(middleware.SessionManager())
-	accountApi := api.ApiGroupApp.AccountApiGroup.AccountApi
+	apiRouter.Use(middleware.SessionManager()) // todo 优化
+	accountApi := api.ApiGroupApp.SystemApiGroup.AccountApi
 	{
 		apiRouter.POST("login", accountApi.Login)       // login
 		apiRouter.POST("register", accountApi.Register) // register

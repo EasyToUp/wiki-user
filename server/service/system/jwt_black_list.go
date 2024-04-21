@@ -3,7 +3,7 @@ package system
 import (
 	"context"
 	"wiki-user/server/global"
-	"wiki-user/server/model"
+	"wiki-user/server/model/system"
 	utils "wiki-user/server/util"
 
 	"go.uber.org/zap"
@@ -16,7 +16,7 @@ type JwtService struct{}
 // @description: 拉黑jwt
 // @param: jwtList model.JwtBlacklist
 // @return: err error
-func (jwtService *JwtService) JsonInBlacklist(jwtList model.JwtBlacklist) (err error) {
+func (jwtService *JwtService) JsonInBlacklist(jwtList system.JwtBlacklist) (err error) {
 	err = global.WK_DB.Create(&jwtList).Error
 	if err != nil {
 		return
@@ -69,7 +69,7 @@ func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err erro
 
 func LoadAll() {
 	var data []string
-	err := global.WK_DB.Model(&model.JwtBlacklist{}).Select("jwt").Find(&data).Error
+	err := global.WK_DB.Model(&system.JwtBlacklist{}).Select("jwt").Find(&data).Error
 	if err != nil {
 		global.WK_LOG.Error("加载数据库jwt黑名单失败!", zap.Error(err))
 		return

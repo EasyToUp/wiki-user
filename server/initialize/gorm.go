@@ -6,6 +6,7 @@ import (
 	"os"
 	"wiki-user/server/global"
 	"wiki-user/server/model/example"
+	"wiki-user/server/model/system"
 )
 
 func Gorm() *gorm.DB {
@@ -29,6 +30,10 @@ func RegisterTables() {
 	db := global.WK_DB
 	err := db.AutoMigrate(
 		example.ExaFileUploadAndDownload{},
+		system.JwtBlacklist{},
+		system.SysUser{},
+		system.SysDictionary{},
+		system.SysDictionaryDetail{},
 	)
 	if err != nil {
 		global.WK_LOG.Error("register table failed", zap.Error(err))

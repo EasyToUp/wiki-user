@@ -1,12 +1,15 @@
 package user
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http/cookiejar"
 	"net/url"
+	"wiki-user/server/global"
 	"wiki-user/server/model"
+	"wiki-user/server/model/system"
 	utils "wiki-user/server/util"
 )
 
@@ -70,6 +73,21 @@ func (accountService *AccountService) RegisterUser(c *gin.Context, registerInfo 
 	logCookies(loginURL, client.Jar.(*cookiejar.Jar))
 	// Handle API response to determine if registration was successful
 	return string(body), nil // Placeholder for error handling based on API response
+}
+
+func (accountService *AccountService) Login(u *system.SysUser) (userInter *system.SysUser, err error) {
+	if nil == global.WK_DB {
+		return nil, fmt.Errorf("db not init")
+	}
+
+	var user system.SysUser
+	err = global.WK_DB.Where("username = ?", u.Username).Preload("Authorities").Preload("Authority").First(&user).Error
+	if err == nil {
+		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
+			return nil, errors.New("密码错误")
+		}
+	}
+	return &user, err
 }
 
 func logCookies(u *url.URL, jar *cookiejar.Jar) {

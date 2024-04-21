@@ -4,7 +4,7 @@ type Server struct {
 	JWT    JWT    `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	System System `mapstructure:"system" json:"system" yaml:"system"`
 	Zap    Zap    `mapstructure:"zap" json:"zap" yaml:"zap"`
-	//Redis   Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
+	Redis  Redis  `mapstructure:"redis" json:"redis" yaml:"redis"`
 	//Email   Email   `mapstructure:"email" json:"email" yaml:"email"`
 	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	// gorm
@@ -26,5 +26,5 @@ type Server struct {
 	Timer Timer `mapstructure:"timer" json:"timer" yaml:"timer"`
 
 	// 跨域配置
-	//Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
+	Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
 }

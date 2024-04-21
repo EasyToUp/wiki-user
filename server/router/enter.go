@@ -1,9 +1,11 @@
 package router
 
-import "wiki-user/server/router/user"
+import (
+	"wiki-user/server/router/system"
+)
 
 type RouterGroup struct {
-	User user.RouterGroup
+	System system.RouterGroup
 }
 
 var RouterGroupApp = new(RouterGroup)

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 	"wiki-user/server/global"
-	"wiki-user/server/model"
 	"wiki-user/server/model/response"
+	"wiki-user/server/model/system"
 	"wiki-user/server/service"
 	utils "wiki-user/server/util"
 
@@ -65,7 +65,7 @@ func JWTAuth() gin.HandlerFunc {
 				if err != nil {
 					global.WK_LOG.Error("get redis jwt failed", zap.Error(err))
 				} else { // 当之前的取成功时才进行拉黑操作
-					_ = jwtService.JsonInBlacklist(model.JwtBlacklist{Jwt: RedisJwtToken})
+					_ = jwtService.JsonInBlacklist(system.JwtBlacklist{Jwt: RedisJwtToken})
 				}
 				// 无论如何都要记录当前的活跃状态
 				_ = jwtService.SetRedisJWT(newToken, newClaims.Username)
