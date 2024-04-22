@@ -87,20 +87,20 @@ func (s *AccountApi) Login(c *gin.Context) {
 func (s *AccountApi) Register(c *gin.Context) {
 	var registerInfo model.RegisterInfo
 	if err := c.ShouldBind(&registerInfo); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		response.Result(400, nil, err.Error(), c)
 		return
 	}
 	token, err := getToken(c, global.WK_CONFIG.System.ApiUrl, "createaccount")
 	if err != nil {
-		c.JSON(500, gin.H{"error": "get tken failed"})
+		response.Result(500, "get tken failed", err.Error(), c)
 		return
 	}
 	resp, err := accountService.RegisterUser(c, &registerInfo, global.WK_CONFIG.System.ApiUrl, token)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Registration failed"})
+		response.Result(500, "Registration failed", err.Error(), c)
 		return
 	}
-	c.JSON(200, gin.H{"resp": resp})
+	response.Result(200, resp, "Registration success", c)
 }
 
 // TokenNext 登录以后签发jwt
