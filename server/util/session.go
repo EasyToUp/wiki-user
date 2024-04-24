@@ -1,12 +1,14 @@
 package utils
 
 import (
-	"github.com/gin-gonic/gin"
-	"wiki-user/server/model"
+	"net/http"
+	"net/http/cookiejar"
 )
 
-func GetSession(c *gin.Context) *model.UserSession {
-	userName := c.Request.Header.Get("username")
-	session := c.MustGet(userName).(model.UserSession)
-	return &session
+func CreateHTTPClient() (*http.Client, error) {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return nil, err
+	}
+	return &http.Client{Jar: jar}, nil
 }
